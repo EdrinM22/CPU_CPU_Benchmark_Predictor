@@ -1,3 +1,8 @@
+
+##Prediction Model on benchmark based on CPU and GPU specifications
+In a dataset that has features such as TDP, Process Size, Frequency, Power consumption, the models are trained to predict approximately the calculated benchmark of the chip
+
+
 Needed Libraries
 pip install numpy
 pip install pandas
