@@ -1,45 +1,54 @@
 import tkinter as tk
 from tkinter import ttk
-import numpy as np
 import joblib
+import numpy as np
 import pandas as pd
 
-# Function to load models and scaler
+# Load models and scaler
 def load_models_and_scaler():
-    global svm_model_2d, svm_model_3d, scaler
+    global svm_model_2d, svm_model_3d, lasso_model_2d, lasso_model_3d, scaler
     svm_model_2d = joblib.load('svm_model_2d.pkl')
     svm_model_3d = joblib.load('svm_model_3d.pkl')
+    lasso_model_2d = joblib.load('lasso_model_2d.pkl')
+    lasso_model_3d = joblib.load('lasso_model_3d.pkl')
     scaler = joblib.load('gpu_scaler.pkl')
 
-# Function to make prediction
 def make_prediction():
+    # Get input values
     input_values = [float(entry.get()) for entry in entries]
     input_df = pd.DataFrame([input_values], columns=feature_columns)
     input_scaled = scaler.transform(input_df)
 
-    if benchmark_var.get() == '2D Benchmark':
-        prediction = svm_model_2d.predict(input_scaled)
-    else:
-        prediction = svm_model_3d.predict(input_scaled)
+    model_type = model_var.get()
+    benchmark_type = benchmark_var.get()
 
+    if model_type == 'SVM':
+        model_2d, model_3d = svm_model_2d, svm_model_3d
+    elif model_type == 'Lasso':
+        model_2d, model_3d = lasso_model_2d, lasso_model_3d
+
+    prediction = model_2d.predict(input_scaled) if benchmark_type == '2D Benchmark' else model_3d.predict(input_scaled)
     result_label.config(text=f"Predicted Score: {prediction[0]:.2f}")
 
-# Initialize Tkinter window
 root = tk.Tk()
 root.title("GPU Benchmark Prediction")
 root.geometry("600x400")
 root.iconbitmap("GPU.ico")
 
-# Load models and scaler
 load_models_and_scaler()
 
-# Dropdown to select 2D or 3D benchmark
-benchmark_var = tk.StringVar()
+# Benchmark selection
+benchmark_var = tk.StringVar(value="2D Benchmark")
 benchmark_dropdown = ttk.OptionMenu(root, benchmark_var, "2D Benchmark", "2D Benchmark", "3D Benchmark")
 benchmark_dropdown.pack()
 
-# Input fields for features
-feature_columns = ['Process Size (nm)', 'TDP (W)','Die Size (mm^2)', 'Transistors (million)', 'Freq (MHz)'  ]  # Replace with actual feature names from your dataset
+# Model selection
+model_var = tk.StringVar(value="SVM")
+model_dropdown = ttk.OptionMenu(root, model_var, "SVM", "SVM", "Lasso")
+model_dropdown.pack()
+
+# Feature input fields
+feature_columns = ['Process Size (nm)', 'TDP (W)', 'Die Size (mm^2)', 'Transistors (million)', 'Freq (MHz)']  # Replace with actual feature names
 entries = []
 for feature in feature_columns:
     ttk.Label(root, text=feature).pack()
@@ -47,13 +56,12 @@ for feature in feature_columns:
     entry.pack()
     entries.append(entry)
 
-# Button for predictions
+# Predict button
 predict_button = ttk.Button(root, text="Predict", command=make_prediction)
 predict_button.pack()
 
-# Label for showing predictions
+# Result label
 result_label = ttk.Label(root, text="Predicted Score: ")
 result_label.pack()
 
-# Run the application
 root.mainloop()
