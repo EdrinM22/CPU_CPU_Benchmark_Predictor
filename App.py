@@ -3,14 +3,21 @@ from tkinter import ttk
 import pandas as pd
 import joblib
 
-# Load the Random Forest model
+# Load the models
 rf_model = joblib.load('random_forest_model.pkl')
+gb_model = joblib.load('gradient_boosting_model.pkl')
 
 # Function to make predictions
 def make_prediction():
     input_values = [float(entry.get()) for entry in entries]
     input_df = pd.DataFrame([input_values], columns=feature_columns)
-    prediction = rf_model.predict(input_df)
+    
+    selected_model = model_var.get()
+    if selected_model == 'Random Forest':
+        prediction = rf_model.predict(input_df)
+    else:
+        prediction = gb_model.predict(input_df)
+    
     result_label.config(text=f"Predicted Benchmark: {prediction[0]:.2f}")
 
 # Main window
@@ -18,8 +25,16 @@ root = tk.Tk()
 root.title("CPU Benchmark Prediction")
 root.geometry("600x400")  # Set window size
 
-# Define feature columns
-feature_columns = ['Process Size (nm)', 'TDP (W)', 'Cores', 'Freq (MHz)']  # Update as per your features
+# Model selection dropdown
+model_var = tk.StringVar()
+model_var.set("Random Forest")  # default value
+model_label = ttk.Label(root, text="Select Model:")
+model_label.pack()
+model_dropdown = ttk.OptionMenu(root, model_var, "Random Forest", "Random Forest", "Gradient Boosting")
+model_dropdown.pack()
+
+# Define feature columns (excluding 'Type' and 'Release Date')
+feature_columns = ['Process Size (nm)', 'TDP (W)', 'Cores', 'Freq (MHz)']
 
 # Create input fields for features
 entries = []
