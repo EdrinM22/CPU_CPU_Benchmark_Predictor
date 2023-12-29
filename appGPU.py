@@ -28,6 +28,7 @@ def make_prediction():
 root = tk.Tk()
 root.title("GPU Benchmark Prediction")
 root.geometry("600x400")
+root.iconbitmap("GPU.ico")
 
 # Load models and scaler
 load_models_and_scaler()

@@ -24,6 +24,8 @@ def make_prediction():
 root = tk.Tk()
 root.title("CPU Benchmark Prediction")
 root.geometry("600x400")  # Set window size
+root.iconbitmap("CPU.ico")
+
 
 # Model selection dropdown
 model_var = tk.StringVar()
