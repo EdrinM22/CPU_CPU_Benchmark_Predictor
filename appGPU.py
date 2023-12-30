@@ -47,7 +47,7 @@ model_dropdown = ttk.OptionMenu(root, model_var, "SVM", "SVM", "Lasso")
 model_dropdown.pack()
 
 # Feature input fields
-feature_columns = ['Process Size (nm)', 'TDP (W)', 'Die Size (mm^2)', 'Transistors (million)', 'Freq (MHz)']  # Replace with actual feature names
+feature_columns = ['Process Size (nm)', 'TDP (W)', 'Die Size (mm^2)', 'Transistors (million)', 'Freq (MHz)']
 entries = []
 for feature in feature_columns:
     ttk.Label(root, text=feature).pack()

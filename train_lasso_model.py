@@ -7,7 +7,7 @@ import joblib
 # Load the dataset
 gpu_df = pd.read_csv('GPU_DATASET.csv')
 
-# Preprocessing steps
+# Preprocessing
 numerical_cols = ['Process Size (nm)', 'TDP (W)', 'Die Size (mm^2)', 'Transistors (million)', 'Freq (MHz)']
 df_numerical = gpu_df[numerical_cols]
 
@@ -37,12 +37,12 @@ X_train_2d, X_test_2d, y_train_2d, y_test_2d = train_test_split(X_scaled, y_2d, 
 X_train_3d, X_test_3d, y_train_3d, y_test_3d = train_test_split(X_scaled, y_3d, test_size=0.2, random_state=42)
 
 # Training Lasso for 2D benchmark
-lasso_model_2d = Lasso(alpha=0.1)  # Adjust alpha as needed
+lasso_model_2d = Lasso(alpha=0.1)
 lasso_model_2d.fit(X_train_2d, y_train_2d)
 joblib.dump(lasso_model_2d, 'lasso_model_2d.pkl')
 
 # Training Lasso for 3D benchmark
-lasso_model_3d = Lasso(alpha=0.1)  # Adjust alpha as needed
+lasso_model_3d = Lasso(alpha=0.1)
 lasso_model_3d.fit(X_train_3d, y_train_3d)
 joblib.dump(lasso_model_3d, 'lasso_model_3d.pkl')
 

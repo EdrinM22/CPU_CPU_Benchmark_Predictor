@@ -35,10 +35,10 @@ model_label.pack()
 model_dropdown = ttk.OptionMenu(root, model_var, "Random Forest", "Random Forest", "Gradient Boosting")
 model_dropdown.pack()
 
-# Define feature columns (excluding 'Type' and 'Release Date')
+# Feature input fields
 feature_columns = ['Process Size (nm)', 'TDP (W)', 'Cores', 'Freq (MHz)']
 
-# Create input fields for features
+# Input fields for features
 entries = []
 for feature in feature_columns:
     ttk.Label(root, text=feature).pack()

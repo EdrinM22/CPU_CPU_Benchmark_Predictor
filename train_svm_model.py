@@ -8,8 +8,6 @@ import joblib
 gpu_df = pd.read_csv('GPU_DATASET.csv')
 
 # Preprocessing
-# Assuming the dataset has columns that you want to check for outliers
-# Update the column names as per your GPU dataset
 numerical_cols = ['Process Size (nm)', 'TDP (W)','Die Size (mm^2)', 'Transistors (million)', 'Freq (MHz)'  ]  # Replace with actual numerical columns
 df_numerical = gpu_df[numerical_cols]
 
@@ -26,7 +24,7 @@ df_cleaned.drop(['Product', 'Foundry', 'Vendor', 'Release Date', 'Type'], axis=1
 df_final = df_cleaned.dropna()
 
 # Separating the features and the targets
-X = df_final.drop(['2D_Bench', '3D_Bench'], axis=1)  # Replace with your target columns
+X = df_final.drop(['2D_Bench', '3D_Bench'], axis=1)
 y_2d = df_final['2D_Bench']
 y_3d = df_final['3D_Bench']
 
