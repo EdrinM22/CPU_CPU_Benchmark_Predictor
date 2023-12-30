@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 import joblib
-import numpy as np
 import pandas as pd
 
 # Load models and scaler

@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.svm import SVR
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
 import joblib
 
@@ -34,19 +34,32 @@ y_3d = df_final['3D_Bench']
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# Splitting the dataset for both 2D and 3D benchmarks
-X_train_2d, X_test_2d, y_train_2d, y_test_2d = train_test_split(X_scaled, y_2d, test_size=0.2, random_state=42)
-X_train_3d, X_test_3d, y_train_3d, y_test_3d = train_test_split(X_scaled, y_3d, test_size=0.2, random_state=42)
+# Define parameter grid
+param_grid = {
+    'C': [0.1, 1, 10, 100],
+    'gamma': ['scale', 'auto', 0.1, 0.01, 0.001],
+    'kernel': ['rbf', 'linear', 'poly']
+}
 
-# Training SVM for 2D benchmark
-svm_model_2d = SVR()
-svm_model_2d.fit(X_train_2d, y_train_2d)
-joblib.dump(svm_model_2d, 'svm_model_2d.pkl')
+# Function to perform grid search and train SVR model
+def train_svr(X, y, filename):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    grid_search = GridSearchCV(SVR(), param_grid, cv=5, scoring='neg_mean_squared_error')
+    grid_search.fit(X_train, y_train)
 
-# Training SVM for 3D benchmark
-svm_model_3d = SVR()
-svm_model_3d.fit(X_train_3d, y_train_3d)
-joblib.dump(svm_model_3d, 'svm_model_3d.pkl')
+    # Train SVM model with the best parameters found
+    best_params = grid_search.best_params_
+    svm_model = SVR(C=best_params['C'], gamma=best_params['gamma'], kernel=best_params['kernel'])
+    svm_model.fit(X_train, y_train)
+
+    # Save the trained model
+    joblib.dump(svm_model, filename)
+
+# Train and save SVM model for 2D benchmarks
+train_svr(X_scaled, y_2d, 'svm_model_2d.pkl')
+
+# Train and save SVM model for 3D benchmarks
+train_svr(X_scaled, y_3d, 'svm_model_3d.pkl')
 
 # Save the scaler
 joblib.dump(scaler, 'gpu_scaler.pkl')
